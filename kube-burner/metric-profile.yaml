@@ -29,6 +29,14 @@
 - query: sum(container_memory_rss{cluster="{{.GKE_MC_CLUSTER_NAME}}",id="/system.slice/containerd.service"}) by (container, pod, instance)
   metricName: containerdMemory
 
+# Node metrics: CPU & Memory
+
+- query: sum(irate(kubernetes_io:node_cpu_core_usage_time{cluster_name="{{.GKE_MC_CLUSTER_NAME}}"}[2m])) by (node_name) > 0
+  metricName: nodeCPU-Workers
+
+- query: sum(kubernetes_io:node_memory_used_bytes{cluster_name="{{.GKE_MC_CLUSTER_NAME}}"}) by (node_name)
+  metricName: nodeMemoryUtilization-Workers
+
 # Cluster metrics
 
 - query: sum(kube_pod_status_phase{cluster="{{.GKE_MC_CLUSTER_NAME}}"}) by (phase)

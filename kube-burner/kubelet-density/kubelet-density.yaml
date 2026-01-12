@@ -1,0 +1,30 @@
+---
+global:
+  gc: true
+  measurements:
+    - name: podLatency
+      thresholds:
+        - conditionType: Ready
+          metric: Avg
+          threshold: 5s
+jobs:
+  - name: kubelet-density
+    namespace: kubelet-density
+    jobIterations: 1
+    qps: 20
+    burst: 20
+    namespacedIterations: false
+    podWait: false
+    waitWhenFinished: true
+    preLoadImages: true
+    preLoadPeriod: 10s
+    namespaceLabels:
+      security.openshift.io/scc.podSecurityLabelSync: false
+      pod-security.kubernetes.io/enforce: privileged
+      pod-security.kubernetes.io/audit: privileged
+      pod-security.kubernetes.io/warn: privileged
+    objects:
+      - objectTemplate: templates/pod.yml
+        replicas: 1
+        inputVars:
+          containerImage: registry.k8s.io/pause:3.1
