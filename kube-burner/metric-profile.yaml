@@ -1,0 +1,38 @@
+# API server
+
+- query: irate(apiserver_request_total{cluster="{{.GKE_MC_CLUSTER_NAME}}",verb=~"post|patch", resource="pods", code="200"}[2m]) > 0
+  metricName: schedulingThroughput
+
+- query: histogram_quantile(0.99, sum(irate(apiserver_request_duration_seconds_bucket{cluster="{{.GKE_MC_CLUSTER_NAME}}",verb=~"LIST|GET", subresource!~"log|exec|portforward|attach|proxy"}[2m])) by (le, resource, verb, scope)) > 0
+  metricName: readOnlyAPICallsLatency
+
+- query: histogram_quantile(0.99, sum(irate(apiserver_request_duration_seconds_bucket{cluster="{{.GKE_MC_CLUSTER_NAME}}",verb=~"POST|PUT|DELETE|PATCH", subresource!~"log|exec|portforward|attach|proxy"}[2m])) by (le, resource, verb, scope)) > 0
+  metricName: mutatingAPICallsLatency
+
+- query: sum(irate(apiserver_request_total{cluster="{{.GKE_MC_CLUSTER_NAME}}",verb!="WATCH"}[2m])) by (verb,resource,code) > 0
+  metricName: APIRequestRate
+
+# Containers & pod metrics
+
+- query: (sum(irate(container_cpu_usage_seconds_total{cluster="{{.GKE_MC_CLUSTER_NAME}}",name!=""}[2m]) * 100) by (container, pod, instance)) > 0
+  metricName: containerCPU
+
+- query: sum(container_memory_rss{cluster="{{.GKE_MC_CLUSTER_NAME}}",name!=""}) by (container, pod, instance)
+  metricName: containerMemory
+
+
+# Containerd Usage
+
+- query: (sum(irate(container_cpu_usage_seconds_total{cluster="{{.GKE_MC_CLUSTER_NAME}}",id="/system.slice/containerd.service"}[2m])*100) by (container, pod, instance)) > 0
+  metricName: containerdCPU
+
+- query: sum(container_memory_rss{cluster="{{.GKE_MC_CLUSTER_NAME}}",id="/system.slice/containerd.service"}) by (container, pod, instance)
+  metricName: containerdMemory
+
+# Cluster metrics
+
+- query: sum(kube_pod_status_phase{cluster="{{.GKE_MC_CLUSTER_NAME}}"}) by (phase)
+  metricName: podStatusCount
+
+- query: sum(kubelet_running_pods{cluster="{{.GKE_MC_CLUSTER_NAME}}"}) by (instance)
+  metricName: podDistribution
