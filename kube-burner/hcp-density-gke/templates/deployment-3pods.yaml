@@ -1,0 +1,99 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: {{.name}}-{{.Replica}}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{.name}}-{{.Replica}}
+      svc: {{.name}}-{{.Replica}}
+  template:
+    metadata:
+      labels:
+        app: {{.name}}-{{.Replica}}
+        svc: {{.name}}-{{.Replica}}
+    spec:
+      containers:
+      - name: {{.name}}-0-{{.Replica}}
+        args:
+        - sleep
+        - infinity
+        image: registry.k8s.io/pause:3.1
+        resources:
+          requests:
+            cpu: 63m
+            memory: 224Mi
+        volumeMounts:
+        - name: secret-{{.Replica}}
+          mountPath: /secret0
+        - name: configmap-{{.Replica}}
+          mountPath: /configmap0
+        imagePullPolicy: IfNotPresent
+        ports:
+         - containerPort: 8080
+           protocol: TCP
+        env:
+        - name: ENVVAR1_{{.name}}
+          value: {{.envVar}}
+      - name: {{.name}}-1-{{.Replica}}
+        args:
+        - sleep
+        - infinity
+        image: quay.io/cloud-bulldozer/curl:latest
+        resources:
+          requests:
+            cpu: 43m
+            memory: 154Mi
+        volumeMounts:
+        - name: secret-{{.Replica}}
+          mountPath: /secret
+        - name: configmap-{{.Replica}}
+          mountPath: /configmap
+        imagePullPolicy: IfNotPresent
+        ports:
+         - containerPort: 8080
+           protocol: TCP
+        env:
+        - name: ENVVAR1_{{.name}}
+          value: {{.envVar}}
+      - name: {{.name}}-2-{{.Replica}}
+        args:
+        - sleep
+        - infinity
+        image: quay.io/cloud-bulldozer/sampleapp:latest
+        resources:
+          requests:
+            cpu: 43m
+            memory: 154Mi
+        volumeMounts:
+        - name: secret-{{.Replica}}
+          mountPath: /secret
+        - name: configmap-{{.Replica}}
+          mountPath: /configmap
+        imagePullPolicy: IfNotPresent
+        ports:
+         - containerPort: 8080
+           protocol: TCP
+        env:
+        - name: ENVVAR1_{{.name}}
+          value: {{.envVar}}
+      volumes:
+      - name: secret-{{.Replica}}
+        secret:
+          secretName: {{.name}}-secret0-{{.Replica}}
+      - name: configmap-{{.Replica}}
+        configMap:
+          name: {{.name}}-cm0-{{.Replica}}
+      # Add not-ready/unreachable tolerations for 15 minutes so that node
+      # failure doesn't trigger pod deletion.
+      tolerations:
+      - key: "node.kubernetes.io/not-ready"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 900
+      - key: "node.kubernetes.io/unreachable"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 900
