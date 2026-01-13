@@ -5,9 +5,11 @@ export METRIC_PROFILE=$(pwd)/kube-burner/metric-profile.yaml
 export UUID="${UUID:-$(uuidgen | tr '[:upper:]' '[:lower:]')}"
 export ES_SERVER=${ES_SERVER:-}
 export ES_INDEX=${ES_INDEX:-ripsaw-kube-burner}
-export PROM_URL=${PROM_URL:-https://monitoring.googleapis.com/v1/projects/$PROJECT/location/global/prometheus}
+export PROJECT_ID=$(gcloud config get-value project 2> /dev/null)
+export PROM_URL=${PROM_URL:-https://monitoring.googleapis.com/v1/projects/$PROJECT_ID/location/global/prometheus}
 export TOKEN=${TOKEN:-}
 export WORKLOAD=${WORKLOAD:-kubelet-density}
+
 
 if [[ $WORKLOAD == "kubelet-density-cni" || $WORKLOAD == "kubelet-density" || $WORKLOAD == "cluster-density-k8s" || $WORKLOAD == "hcp-density-aks" ]]; then
     pushd $PWD/kube-burner/$WORKLOAD
