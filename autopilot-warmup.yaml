@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: autopilot-warmup
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: warmup
+  template:
+    metadata:
+      labels:
+        app: warmup
+    spec:
+      containers:
+      - name: pause
+        image: registry.k8s.io/pause:3.9
+        resources:
+          requests:
+            cpu: "50m"
+            memory: "52Mi"
+            ephemeral-storage: "10Mi"
+          limits:
+            cpu: "50m"
+            memory: "52Mi"
+            ephemeral-storage: "10Mi"

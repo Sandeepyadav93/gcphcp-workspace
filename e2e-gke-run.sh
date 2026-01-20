@@ -11,7 +11,7 @@ export TOKEN=${TOKEN:-}
 export WORKLOAD=${WORKLOAD:-kubelet-density}
 
 
-if [[ $WORKLOAD == "kubelet-density-cni" || $WORKLOAD == "kubelet-density" || $WORKLOAD == "cluster-density-k8s" || $WORKLOAD == "hcp-density-aks" ]]; then
+if [[ $WORKLOAD == "kubelet-density-cni" || $WORKLOAD == "kubelet-density" || $WORKLOAD == "cluster-density-k8s" || $WORKLOAD == "hcp-density-gke" ]]; then
     pushd $PWD/kube-burner/$WORKLOAD
     export START_TIME=$(date +"%s")
     kube-burner init --config $WORKLOAD.yaml --skip-tls-verify

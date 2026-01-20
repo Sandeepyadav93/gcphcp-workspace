@@ -5,20 +5,20 @@ global:
     - name: podLatency
 
 jobs:
-  - name: hcp-density-aks
-    jobIterations: 33
+  - name: hcp-density-gke
+    jobIterations: 2
     qps: 20
     burst: 20
     namespacedIterations: true
-    namespace: hcp-density-aks
+    namespace: hcp-density-gke
     podWait: false
     waitWhenFinished: true
     preLoadImages: true
     preLoadPeriod: 10s
     churn: true
     churnPercent: 10
-    churnDelay: 5m
-    churnDuration: 20m
+    churnDelay: 1m #5m
+    churnDuration: 4m #20m
     namespaceLabels:
       security.openshift.io/scc.podSecurityLabelSync: false
       pod-security.kubernetes.io/enforce: privileged

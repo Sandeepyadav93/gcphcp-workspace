@@ -20,8 +20,8 @@ jobs:
     preLoadPeriod: 10s
     churn: true
     churnPercent: 10
-    churnDelay: 5m
-    churnDuration: 20m
+    churnDelay: 1m #5m
+    churnDuration: 2m #20m
     churnDeletionStrategy: gvr
     namespaceLabels:
       security.openshift.io/scc.podSecurityLabelSync: false
