@@ -1,12 +1,33 @@
 ---
 global:
+  gc: true
   measurements:
     - name: podLatency
       thresholds:
         - conditionType: Ready
           metric: Avg
           threshold: 5s
-
+metricsEndpoints:
+{{ if .ES_SERVER }}
+  - endpoint: {{.PROM_URL}}
+    token: {{.TOKEN}}
+    metrics:
+      - {{.METRIC_PROFILE}}
+    indexer:
+      esServers: ["{{.ES_SERVER}}"]
+      insecureSkipVerify: true
+      defaultIndex: {{.ES_INDEX}}
+      type: opensearch
+{{ end }}
+{{ if .LOCAL_INDEXING }}
+  - endpoint: {{.PROM_URL}}
+    token: {{.TOKEN}}
+    metrics:
+      - {{.METRIC_PROFILE}}
+    indexer:
+      type: local
+      metricsDirectory: collected-metrics-{{.UUID}}
+{{ end }}
 jobs:
   - name: kubelet-density-cni
     jobIterations: 1

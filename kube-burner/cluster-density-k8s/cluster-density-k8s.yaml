@@ -7,6 +7,27 @@ global:
         - conditionType: Ready
           metric: Avg
           threshold: 5s
+metricsEndpoints:
+{{ if .ES_SERVER }}
+  - endpoint: {{.PROM_URL}}
+    token: {{.TOKEN}}
+    metrics:
+      - {{.METRIC_PROFILE}}
+    indexer:
+      esServers: ["{{.ES_SERVER}}"]
+      insecureSkipVerify: true
+      defaultIndex: {{.ES_INDEX}}
+      type: opensearch
+{{ end }}
+{{ if .LOCAL_INDEXING }}
+  - endpoint: {{.PROM_URL}}
+    token: {{.TOKEN}}
+    metrics:
+      - {{.METRIC_PROFILE}}
+    indexer:
+      type: local
+      metricsDirectory: collected-metrics-{{.UUID}}
+{{ end }}
 jobs:
   - name: cluster-density
     jobIterations: 1
@@ -18,11 +39,10 @@ jobs:
     waitWhenFinished: true
     preLoadImages: true
     preLoadPeriod: 10s
-    churn: true
-    churnPercent: 10
-    churnDelay: 1m #5m
-    churnDuration: 2m #20m
-    churnDeletionStrategy: gvr
+    churnConfig:
+      percent: 10
+      delay: 1m #5m
+      duration: 2m #20m
     namespaceLabels:
       security.openshift.io/scc.podSecurityLabelSync: false
       pod-security.kubernetes.io/enforce: privileged
