@@ -11,7 +11,7 @@ export SUBNET_NAME="${CLUSTER_NAME}-subnet"
 
 # In regional clusters, this is nodes PER ZONE (1 x 3 zones = 3 nodes total)
 export NUM_WORKER_PER_ZONE=${NUM_WORKER_PER_ZONE:-1} 
-export WORKER_TYPE=${WORKER_TYPE:-n2-standard-16}
+export WORKER_TYPE=${WORKER_TYPE:-n2-standard-4}
 export MAX_PODS_PER_WORKER=${MAX_PODS_PER_WORKER:-250}
 
 # IP Ranges
