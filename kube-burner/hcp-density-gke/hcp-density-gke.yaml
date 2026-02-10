@@ -3,27 +3,6 @@ global:
   gc: true
   measurements:
     - name: podLatency
-metricsEndpoints:
-{{ if .ES_SERVER }}
-  - endpoint: {{.PROM_URL}}
-    token: {{.TOKEN}}
-    metrics:
-      - {{.METRIC_PROFILE}}
-    indexer:
-      esServers: ["{{.ES_SERVER}}"]
-      insecureSkipVerify: true
-      defaultIndex: {{.ES_INDEX}}
-      type: opensearch
-{{ end }}
-{{ if .LOCAL_INDEXING }}
-  - endpoint: {{.PROM_URL}}
-    token: {{.TOKEN}}
-    metrics:
-      - {{.METRIC_PROFILE}}
-    indexer:
-      type: local
-      metricsDirectory: collected-metrics-{{.UUID}}
-{{ end }}
 jobs:
   - name: hcp-density-gke
     jobIterations: 2
