@@ -20,6 +20,13 @@
 - query: sum(container_memory_rss{cluster="{{.GKE_MC_CLUSTER_NAME}}",name!=""}) by (container, pod, instance)
   metricName: containerMemory
 
+# Kubelet metrics
+
+- query: sum(rate(container_cpu_usage_seconds_total{cluster="{{.GKE_MC_CLUSTER_NAME}}",id="/system.slice/kubelet.service"}[2m]) * 100) by (node)
+  metricName: kubeletCPU
+
+- query: sum(container_memory_rss{cluster="{{.GKE_MC_CLUSTER_NAME}}",id="/system.slice/kubelet.service"}) by (node)
+  metricName: kubeletMemory
 
 # Containerd Usage
 
