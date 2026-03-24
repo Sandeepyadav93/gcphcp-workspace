@@ -15,9 +15,9 @@ export WORKER_TYPE=${WORKER_TYPE:-n2-standard-4}
 export MAX_PODS_PER_WORKER=${MAX_PODS_PER_WORKER:-250}
 
 # IP Ranges
-export PRIMARY_RANGE="10.10.0.0/24"
+export PRIMARY_RANGE="10.10.0.0/23"
 export POD_RANGE="172.16.0.0/16"
-export SERVICE_RANGE="172.17.0.0/20"
+export SERVICE_RANGE="172.17.0.0/17"
 
 echo "🚀 Starting setup for GKE Standard Cluster: $CLUSTER_NAME"
 
@@ -53,6 +53,7 @@ gcloud container clusters create "$CLUSTER_NAME" \
     --cluster-secondary-range-name="pods-range" \
     --services-secondary-range-name="services-range" \
     --release-channel="regular" \
+    --labels="billing-tag=$CLUSTER_NAME" \
     --monitoring=SYSTEM,API_SERVER,CONTROLLER_MANAGER,SCHEDULER,HPA,STATEFULSET,DEPLOYMENT,DAEMONSET,POD,STORAGE,CADVISOR,KUBELET
 
 echo "✅ Deployment Successful!"

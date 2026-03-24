@@ -44,7 +44,7 @@ spec:
         image: quay.io/cloud-bulldozer/curl:latest
         resources:
           requests:
-            cpu: 43m
+            cpu: 50m
             memory: 154Mi
         volumeMounts:
         - name: secret-{{.Replica}}
@@ -65,7 +65,7 @@ spec:
         image: quay.io/cloud-bulldozer/sampleapp:latest
         resources:
           requests:
-            cpu: 43m
+            cpu: 50m
             memory: 154Mi
         volumeMounts:
         - name: secret-{{.Replica}}

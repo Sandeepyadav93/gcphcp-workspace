@@ -1,11 +1,29 @@
 ---
 global:
-  gc: true
+  # gc: true
   measurements:
     - name: podLatency
+metricsEndpoints:
+{{ if .ES_SERVER }}
+- endpoint: {{.PROM_URL}}
+  token: {{.TOKEN}}
+  indexer:
+    esServers: ["{{.ES_SERVER}}"]
+    insecureSkipVerify: true
+    defaultIndex: {{.ES_INDEX}}
+    type: opensearch
+{{ end }}
+{{ if .LOCAL_INDEXING }}
+- endpoint: {{.PROM_URL}}
+  token: {{.TOKEN}}
+  indexer:
+    type: local
+    metricsDirectory: collected-metrics-{{.UUID}}
+{{ end }}
 jobs:
   - name: hcp-density-gke
-    jobIterations: 2
+    jobIterations: 100
+    jobIterationDelay: 1m
     qps: 20
     burst: 20
     namespacedIterations: true
@@ -13,11 +31,11 @@ jobs:
     podWait: false
     waitWhenFinished: true
     preLoadImages: true
-    preLoadPeriod: 10s
-    churnConfig:
-      percent: 10
-      delay: 1m #5m
-      duration: 2m #20m
+    preLoadPeriod: 10m
+    # churnConfig:
+    #   percent: 10
+    #   delay: 5m
+    #   duration: 20m
     namespaceLabels:
       security.openshift.io/scc.podSecurityLabelSync: false
       pod-security.kubernetes.io/enforce: privileged
